@@ -1,8 +1,9 @@
 from flask import Blueprint, jsonify, request
-import sqlite3
 import os
+import datetime
+import re
 
-from database.controller import gen_id
+from database.controller import get_all_todos, create_todo, edit_todo, delete_todo
 from modules.error import InvalidError
 
 
@@ -12,78 +13,93 @@ route = Blueprint('/', __name__)
 
 
 @route.route('/')
-def get_todo():
+def routing_get_all_todos():
 	try:
-		conn = sqlite3.connect(DATABASE)
-		cursor = conn.cursor()
-		cursor.execute('SELECT * FROM todos')
-		todos = cursor.fetchall()
-		conn.close()
-
-		return jsonify({'todos': todos})
+		return jsonify({'todos': get_all_todos()})
 	
 	except Exception as e:
 		print(e)
-		return jsonify({'message': 'Internal server error'}, 500)
-
+		return jsonify({'message': 'Internal server error'}), 500
 
 
 @route.route('/create', methods=["POST"])
-def create_todo():
+def routing_create_todo():
 	try :
-		conn = sqlite3.connect(DATABASE)
 		req_todo = request.json
 		if not ("title" in req_todo and "description" in req_todo and  "date" in req_todo) :
 			raise InvalidError("無効なデータです")
-
-		cursor = conn.cursor()
-		cursor.execute(
-			'''
-				INSERT INTO todos (id, title, description, done, date)
-				VALUES (?, ?, ?, ?, ?)
-			''',
-			(gen_id(32),
+		
+		if not type(req_todo["title"]) == str or not type(req_todo["description"]) == str or not type(req_todo["date"]) == str:
+			raise InvalidError("データの型が無効です")
+		
+		if req_todo["title"] == None or req_todo["title"] == "" or req_todo["date"] == None or req_todo["date"] == "" :
+			raise InvalidError("タイトルと日付は必須です")
+		
+		if len(req_todo["title"]) > 255:
+			raise InvalidError("タイトルが長すぎます")
+		
+		pattern = re.compile(r'\d{4}/\d{2}/\d{2}$')
+		if pattern.match(req_todo["date"]) == None:
+			raise InvalidError("日付のフォーマットが無効です")
+		
+		date_str = list(map(int, req_todo["date"].split("/")))
+		date = datetime.datetime(date_str[0], date_str[1], date_str[2])
+		
+		create_todo(
 			req_todo["title"],
 			req_todo["description"],
-			False,
-			req_todo["date"]))
-		conn.commit()
-		conn.close()
+			date
+		)
 
-		return jsonify({'message': 'Todo created'})
+		return jsonify({'message': 'Success!'})
 	
 	except InvalidError as e:
-		return jsonify({'message': e.args[0]}, 400)
+		return jsonify({'message': e.args[0]}), 400
 	
 	except Exception as e:
 		print(e)
-		return jsonify({'message': 'Internal server error'}, 500)
+		return jsonify({'message': 'Internal server error'}), 500
 
 
 @route.route("/edit", methods=["POST"])
-def edit_todo():
+def routing_edit_todo():
 	try :
-		conn = sqlite3.connect(DATABASE)
 		req_todo = request.json
 		if not ("title" in req_todo and "description" in req_todo and  "date" in req_todo) :
 			raise InvalidError("無効なデータです")
+		
+		if not(type(req_todo["title"]) == str and type(req_todo["description"]) == str and type(req_todo["date"]) == str and type(req_todo["done"] == bool)):
+			raise InvalidError("データの型が無効です")
+		
+		if len(req_todo["title"]) > 255:
+			raise InvalidError("タイトルが長すぎます")
+		
+		pattern = re.compile(r'\d{4}/\d{2}/\d{2}$')
+		if pattern.match(req_todo["date"]) == None:
+			raise InvalidError("日付のフォーマットが無効です")
+		
+		date_str = list(map(int, req_todo["date"].split("/")))
+		date = datetime.datetime(date_str[0], date_str[1], date_str[2])
 
-		cursor = conn.cursor()
-		cursor.execute(
-			'''
-				UPDATE todos SET title=?, description=?, date=?, done=?
-				WHERE id=?
-			''',
-			( req_todo["title"], req_todo["description"], req_todo["date"], req_todo["done"], req_todo["id"])
-		)
-		conn.commit()
-		conn.close()
+		edit_todo( request.args.get("id"), req_todo["title"], req_todo["description"], req_todo["done"], date )
 
-		return jsonify({'message': 'edit success!'})
+		return jsonify({'message': 'Success!'}), 200
 	
 	except InvalidError as e:
-		return jsonify({'message': e.args[0]}, 400)
+		return jsonify({'message': e.args[0]}), 400
 	
 	except Exception as e:
 		print(e)
-		return jsonify({'message': 'Internal server error'}, 500)
+		return jsonify({'message': 'Internal server error'}), 500
+
+
+@route.route("/delete")
+def routing_delete_todo():
+	try:
+		delete_todo(request.args.get("id"))
+
+		return jsonify({"message": "Success!"}), 200
+	
+	except Exception as e:
+		print(e)
+		return jsonify({"message": "Internal Server Error"}), 500
