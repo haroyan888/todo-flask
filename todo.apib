@@ -1,0 +1,83 @@
+FORMAT: 1A
+HOST: http://localhost:8000/api
+
+# Todo API
+勉強のために作成しているTodoアプリのAPIです。
+
+
+# Todo Endpoints
+
+## Todos [/]
+### 全てのTodoを取得 [GET]
++ Response 200 (application/json)
+	+ Attributes
+		+ todos (array[object], fixed-type)
+			+ (object)
+				+ id: Ns0RB55cu772ktIDNZImyZaobMj4sGM1 (string) - TodoのID
+				+ title: sample todo (string) - Todoのタイトル
+				+ description: Sample todo for API specification. (string) - Todoの説明
+				+ done: false (boolean) - Todoを行ったかどうか
+				+ date: `2024-01-01 00:00:00` (string) - Todoの日付
++ Response 500 (application/json)
+	+ Attributes
+		+ message: Internal Server Error (string)
+
+## Create todo [/create]
+### Todoを作成 [POST]
++ Request (application/json)
+	+ Attributes
+		+ title: sample todo (string) - Todoのタイトル
+		+ description: Sample todo for API specification. (string) - Todoの説明
+		+ date: `2024-01-01 00:00:00` (string) - Todoの日付
++ Response 200 (application/json)
+	+ Attributes
+		+ result: true (boolean)
+		+ message: `Success!`
++ Response 400 (application/json)
+	+ Attributes
+		+ result: false (boolean)
+		+ message: 無効なデータです (string)
++ Response 500 (application/json)
+	+ Attributes
+		+ result: false (boolean)
+		+ message: Internal Server Error (string)
+
+## Edit todo [/edit]
+### Todoをアップデート [POST]
++ Request (application/json)
+	+ Attributes
+		+ id: Ns0RB55cu772ktIDNZImyZaobMj4sGM1 - TodoのID
+		+ title: sample todo (string) - Todoのタイトル
+		+ description: Sample todo for API specification. (string) - Todoの説明
+		+ done: true (boolean) - Todoを行ったかどうか
+		+ date: `2024-01-01 00:00:00` (string) - Todoの日付
++ Response 200 (application/json)
+	+ Attributes
+		+ result: true (boolean)
+		+ message: `Success!`
++ Response 400 (application/json)
+	+ Attributes
+		+ result: false (boolean)
+		+ message: 無効なデータです (string)
++ Response 500 (application/json)
+	+ Attributes
+		+ result: false (boolean)
+		+ message: Internal Server Error (string)
+
+## Delete todo [/delete]
+### Todoをアップデート [POST]
++ Request (application/json)
+	+ Attributes
+		+ id: Ns0RB55cu772ktIDNZImyZaobMj4sGM1 - TodoのID
++ Response 200 (application/json)
+	+ Attributes
+		+ result: true (boolean)
+		+ message: `Success!`
++ Response 400 (application/json)
+	+ Attributes
+		+ result: false (boolean)
+		+ message: idを指定してください (string)
++ Response 500 (application/json)
+	+ Attributes
+		+ result: false (boolean)
+		+ message: Internal Server Error (string)
