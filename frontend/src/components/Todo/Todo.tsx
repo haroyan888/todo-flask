@@ -7,19 +7,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
 import Todo from "@/types/Todo";
-
-
-async function updateFetch (
-	options: string
-) {
-	return await fetch("http://localhost:8000/api/edit", {
-		"method": "post",
-		"headers": {
-			"Content-Type": "application/json"
-		},
-		"body" : options
-	})
-}
+import { postFetch } from "../../functions/fetch";
 
 
 export default function TodoCard({
@@ -31,7 +19,7 @@ export default function TodoCard({
 } : Todo) {
 	const [done_loc, setDone] = useState<boolean>(done);
 	useEffect(() => {
-		updateFetch(JSON.stringify({
+		postFetch("/edit", JSON.stringify({
 			"id": id,
 			"done": Boolean(done_loc)
 		}));
