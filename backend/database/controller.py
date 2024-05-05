@@ -53,7 +53,7 @@ def get_todo(id: str) -> dict | None:
 		"id": todo[0],
 		"title": todo[1],
 		"description": todo[2],
-		"done": todo[3],
+		"done": bool(todo[3]),
 		"date": todo[4]
 	}
 
@@ -68,7 +68,7 @@ def get_all_todos() -> list[dict]:
 		"id": todo[0],
 		"title": todo[1],
 		"description": todo[2],
-		"done": todo[3],
+		"done": bool(todo[3]),
 		"date": todo[4]
 	} for todo in todos]
 

@@ -17,15 +17,20 @@ export default function TodoCard({
 	done,
 	date 
 } : Todo) {
-	const [done_loc, setDone] = useState<boolean>(done);
+	const [doneLoc, setDone] = useState<boolean>(done);
 	useEffect(() => {
 		postFetch("/edit", JSON.stringify({
 			"id": id,
-			"done": Boolean(done_loc)
+			"done": Boolean(doneLoc)
 		}));
-	}, [done_loc]);
+	}, [doneLoc]);
 	return (
-		<Card sx={{ minWidth: 275 }}>
+		<Card 
+			sx={{ minWidth: 275	}}
+			style={{
+				backgroundColor: doneLoc ? "#43a047" : "#eeeeee"
+			}} 
+		>
 			<CardContent>
 				<Typography variant="h5" component="div">
 					{title}
@@ -38,8 +43,14 @@ export default function TodoCard({
 				</Typography>
 			</CardContent>
 			<CardActions>
-				<Button size="small" onClick={() => setDone(!done_loc)}>
-					{ done_loc ? "まだ" : "できた" }
+				<Button 
+					size="small" 
+					style={{
+						color: doneLoc ? "#ef5350" : "#66bb6a"
+					}}
+					onClick={() => setDone(!doneLoc)}
+				>
+					{ doneLoc ? "まだ" : "できた" }
 				</Button>
 			</CardActions>
 		</Card>
