@@ -1,11 +1,16 @@
+// react
 import {useState, useEffect} from "react";
 
+// components
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+// icons
+import CheckIcon from '@mui/icons-material/Check';
 
+// self components
 import Todo from "@/types/Todo";
 import { postFetch } from "../../functions/fetch";
 
@@ -26,14 +31,21 @@ export default function TodoCard({
 	}, [doneLoc]);
 	return (
 		<Card 
-			sx={{ minWidth: 275	}}
-			style={{
-				backgroundColor: doneLoc ? "#43a047" : "#eeeeee"
-			}} 
+			sx={{ 
+				minWidth: 275,
+				backgroundColor: "#f5f5f5"
+			}}
 		>
 			<CardContent>
 				<Typography variant="h5" component="div">
 					{title}
+					{doneLoc ? (
+							<CheckIcon 
+								sx={{ ml: 2 }}
+								color="success"
+							/>
+						) : undefined
+					}
 				</Typography>
 				<Typography variant="body2">
 					{description}
@@ -45,9 +57,8 @@ export default function TodoCard({
 			<CardActions>
 				<Button 
 					size="small" 
-					style={{
-						color: doneLoc ? "#ef5350" : "#66bb6a"
-					}}
+					color={doneLoc ? "error" : "success"}
+					variant="contained"
 					onClick={() => setDone(!doneLoc)}
 				>
 					{ doneLoc ? "まだ" : "できた" }
