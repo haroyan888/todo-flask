@@ -48,25 +48,39 @@ export default function AddFormModal ({
 						label="タイトル"
 						variant="standard"
 						margin="normal"
-					/>
+						sx={{
+							width: "100%"
+						}}
+					/><br />
+					<label>期限</label><br />
+						<TextField
+							required
+							id="add-date"
+							name="date"
+							type="date"
+							sx={{
+								width: 200
+							}}
+							margin="none"
+						/>
+					<br />
 					<TextField
 						id="add-description"
 						name="description"
 						label="説明"
 						multiline
+						minRows="10"
 						margin="normal"
-					/>
-					<TextField
-						required
-						id="add-date"
-						name="date"
-						label="期限"
-						type="date"
-						margin="normal"
-					/>
+						sx={{
+							width: "100%"
+						}}
+					/><br />
 					<Button
 						type="submit"
 						endIcon={<SendIcon />}
+						sx={{
+							left: "auto"
+						}}
 					>
 						Send
 					</Button>
