@@ -37,11 +37,14 @@ function App() {
           return (
             <div key={element["id"]} className="m-10">
               <TodoCard 
-                id={element["id"]} 
-                title={element["title"]}
-                description={element["description"]}
-                done={element["done"]}
-                date={element["date"]}
+                todo={{
+                  id: element["id"], 
+                  title: element["title"],
+                  description: element["description"],
+                  done: element["done"],
+                  date: element["date"]
+                }}
+                afterEditTodo={() => (async () => setTodos(await getTodos()))()}
               />
             </div>
           )
