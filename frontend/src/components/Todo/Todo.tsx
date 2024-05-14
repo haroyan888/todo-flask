@@ -13,57 +13,72 @@ import CheckIcon from '@mui/icons-material/Check';
 // self components
 import Todo from "@/types/Todo";
 import { postFetch } from "../../functions/fetch";
+import DetailTodoModal from "../Modal/detail-modal";
 
 
 export default function TodoCard({
-	id,
-	title,
-	description,
-	done,
-	date 
-} : Todo) {
-	const [doneLoc, setDone] = useState<boolean>(done);
+	todo,
+	afterEditTodo
+} : {
+	todo:Todo,
+	afterEditTodo: () => void
+}) {
+	// Todoを行ったかどうかを表す
+	const [doneLoc, setDone] = useState<boolean>(todo.done);
+	// Todoの詳細モーダルの開閉状態を表す
+	const [isShowDetailTodo, setShowDetailTodo] = useState<boolean>(false);
 	useEffect(() => {
 		postFetch("/edit", JSON.stringify({
-			"id": id,
+			"id": todo.id,
 			"done": Boolean(doneLoc)
 		}));
 	}, [doneLoc]);
 	return (
-		<Card 
-			sx={{ 
-				minWidth: 275,
-				backgroundColor: "#f5f5f5"
-			}}
-		>
-			<CardContent>
-				<Typography variant="h5" component="div">
-					{title}
-					{doneLoc ? (
-							<CheckIcon 
-								sx={{ ml: 2 }}
-								color="success"
-							/>
-						) : undefined
-					}
-				</Typography>
-				<Typography variant="body2">
-					{description}
-				</Typography>
-				<Typography sx={{ mb: 1.5 }} color="text.secondary">
-					{date}
-				</Typography>
-			</CardContent>
-			<CardActions>
-				<Button 
-					size="small" 
-					color={doneLoc ? "error" : "success"}
-					variant="contained"
-					onClick={() => setDone(!doneLoc)}
-				>
-					{ doneLoc ? "まだ" : "できた" }
-				</Button>
-			</CardActions>
-		</Card>
+		<>
+			<Card 
+				sx={{ 
+					minWidth: 275,
+					backgroundColor: "#f5f5f5"
+				}}
+			>
+				<CardContent>
+					<Typography variant="h5" component="div">
+						{todo.title}
+						{doneLoc ? (
+								<CheckIcon 
+									sx={{ ml: 2 }}
+									color="success"
+								/>
+							) : undefined
+						}
+					</Typography>
+					<Typography variant="body2">
+						{todo.description === undefined ? todo.description : todo.description.length < 20 ? todo.description : todo.description.slice(0, 20) + "..." }
+					</Typography>
+					<Typography sx={{ mb: 1.5 }} color="text.secondary">
+						{todo.date}
+					</Typography>
+				</CardContent>
+				<CardActions>
+					<Button 
+						size="small" 
+						color={doneLoc ? "error" : "success"}
+						variant="contained"
+						onClick={() => setDone(!doneLoc)}
+					>
+						{ doneLoc ? "まだ" : "できた" }
+					</Button>
+					<Button variant="contained" onClick={() => setShowDetailTodo(true)}>
+						詳細
+					</Button>
+				</CardActions>
+			</Card>
+			<DetailTodoModal 
+				todo={todo}
+				isShowModal={isShowDetailTodo}
+				setShowModal={setShowDetailTodo}
+				afterEditTodo={afterEditTodo}
+			/>
+		</>
 	);
 }
