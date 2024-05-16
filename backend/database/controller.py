@@ -61,7 +61,7 @@ def get_todo(id: str) -> dict | None:
 def get_all_todos() -> list[dict]:
 	conn = sqlite3.connect(get_database_url())
 	cursor = conn.cursor()
-	cursor.execute('SELECT * FROM todos')
+	cursor.execute('SELECT * FROM todos ORDER BY date ASC')
 	todos = cursor.fetchall()
 	conn.close()
 	return [{
