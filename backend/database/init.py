@@ -1,9 +1,9 @@
 import sqlite3
 
-from database.controller import get_database_url
+from controller import get_database_url
 
 
-conn = sqlite3.connect(get_database_url)
+conn = sqlite3.connect(get_database_url())
 cursor = conn.cursor()
 cursor.execute('''
 	CREATE TABLE IF NOT EXISTS todos (

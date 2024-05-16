@@ -53,7 +53,7 @@ def get_todo(id: str) -> dict | None:
 		"id": todo[0],
 		"title": todo[1],
 		"description": todo[2],
-		"done": todo[3],
+		"done": bool(todo[3]),
 		"date": todo[4]
 	}
 
@@ -61,14 +61,14 @@ def get_todo(id: str) -> dict | None:
 def get_all_todos() -> list[dict]:
 	conn = sqlite3.connect(get_database_url())
 	cursor = conn.cursor()
-	cursor.execute('SELECT * FROM todos')
+	cursor.execute('SELECT * FROM todos ORDER BY date ASC')
 	todos = cursor.fetchall()
 	conn.close()
 	return [{
 		"id": todo[0],
 		"title": todo[1],
 		"description": todo[2],
-		"done": todo[3],
+		"done": bool(todo[3]),
 		"date": todo[4]
 	} for todo in todos]
 
